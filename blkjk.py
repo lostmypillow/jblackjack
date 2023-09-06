@@ -16,50 +16,59 @@ orig_deck = {
 "K of clubs": 10,    "K of hearts": 10,    "K of diamonds": 10,    "K of spades": 10, 
 }
 
+ace_deck = {
+    "A of clubs": 11,    "A of hearts": 11,    "A of diamonds": 11,    "A of spades": 11,
+}
+
+
 deck = orig_deck.copy()
 h_hand = []
 h_value = 0
+#h_value_a = 0
 p_hand = []
-p_value = 0
-
+p_val = 0
 player_turn = False
-
-
-Bust = False
-Push = False
 dealer_turn = False
 count = 0
-
+AceP = False
+AceH = False
+Bust = False
 #while play_again == True:
 
-while count < 4:
-    hand = random.choice(list(deck.keys()))
-    deck.pop(hand)
-    if count < 2:
-        h_hand.append(hand)
-        print(int(orig_deck.get(hand)))
-        h_value += int(orig_deck.get(hand))
+def count_hand(which_hand,times):
+    count = 0
+    value = 0
+    while count < times:
+        hand = random.choice(list(deck.keys()))
+        deck.pop(hand)
+        which_hand.append(hand)
+        value += int(orig_deck.get(hand))
+        print(value)
+     #   if orig_deck.get(hand) == 1:
+     #       AceH == True
         count += 1
+    return value
+
+def print_result(*args):
+    #first check for house Ace
+    if args[0] == True:
+        if args[1] == True:
+            print("Dealer cards: ", h_hand[0], "(", orig_deck.get(h_hand[0]),"or", (orig_deck.get(h_hand[0]) + 10), ")", "\n", "Your cards: ", p_hand, "(", p_val,"or", (p_hand + 10), ")","\n")
+        else:
+            print("Dealer cards: ", h_hand[0], "(", orig_deck.get(h_hand[0]),"or", (orig_deck.get(h_hand[0]) + 10), ")", "\n", "Your cards: ", p_hand, "(", p_val, ")","\n")
+   
     else:
-        p_hand.append(hand)
-        p_value += int(orig_deck.get(hand))
-        count += 1
+        print("Dealer cards: ", h_hand[0], "(", orig_deck.get(h_hand[0]), ")", "\n", "Your cards: ", p_hand, "(", p_val, ")","\n")
 
 
-print("Dealer cards: ", h_hand[0], ", ", "(Hidden)", "\n","Value: ", orig_deck.get(h_hand[0]), "\n", "Your cards: ", p_hand, "\n" , "Value: ", p_value, "\n")
-
-time.sleep(1)    
+h_value += count_hand(h_hand, 2)
+p_val += count_hand(p_hand, 2)
 
 while player_turn == False:
-    if p_value == 21:
-        print ("You get ", hand, "\n", "Your cards: ", p_hand, "\n" , "Value: ", p_value)
+    print_result(AceH, AceP)
+    if p_val == 21:
         print("BLACKJACK!", "\n")
-        time.sleep(1)
-        player_turn = True
-    elif p_value > 21:
-        print ("You get ", hand, "\n", "Your cards: ", p_hand, "\n" , "Value: ", p_value, "\n")
-        time.sleep(1)
-        print("BUST!", "\n")
+        time.sleep(2)
         player_turn = True
     else:
         prompt = input("Hit or stand? (h/s)")
@@ -67,43 +76,63 @@ while player_turn == False:
             hand = random.choice(list(deck.keys()))
             deck.pop(hand)
             p_hand.append(hand)
-            p_value += int(orig_deck.get(hand))
-            print ("You get ", hand, "\n", "Your cards: ", p_hand, "\n" , "Value: ", p_value, "\n")
-            time.sleep(1)
+            p_val += int(orig_deck.get(hand))
+            print ("You get ", hand, "\n")
+            time.sleep(2)
+            if p_val > 21:
+                print("You BUST!", "\n")
+                player_turn = True
+                dealer_turn = True
         elif prompt == "s":
             player_turn = True
+            print("\nYour turn is over")
+            time.sleep(2)
+            print("House's turn\n")  
     
-time.sleep(1)    
-
-print ("Dealer flips over card", "\n", "Dealer cards: ", h_hand, "\n","Value: ", h_value, "\n", "Your cards: ", p_hand, "\n" , "Value: ", p_value, "\n")
-
-time.sleep(1)    
+ 
 
 while dealer_turn == False:
-    if h_value > 21:
-        time.sleep(1)
-        print ("Dealer gets ", hand, "\n", "Dealer cards: ", h_hand, "\n" , "Value: ", h_value, "\n")
-        time.sleep(1)
-        print("Dealer BUST")
+    
+    time.sleep(2)
+    print("Dealer cards: ", h_hand, "(", h_value, ")", "\nYour cards: ", p_hand , "(", p_val, ")","\n") 
+    time.sleep(2) 
+    if h_value == 21 and h_hand.len() == 2:
+            time.sleep(2)
+            print("Dealer BLACKJACK!")
+    elif h_value >= 17:
+        time.sleep(2)
+        print("House stands\n")
+        if h_value > p_val and h_value <=21:
+            time.sleep(2)
+            print("Dealer wins! You lose!")
+        elif h_value == p_val and h_value <=21:
+            time.sleep(2)
+            print("Push")
+        else:
+            time.sleep(2)
+            print("House pays! Player wins!")
         dealer_turn = True
-    elif h_value == 21:
-        time.sleep(1)
-        print ("Dealer gets ", hand, "\n", "Dealer cards: ", p_hand, "\n" , "Value: ", p_value, "\n")
-        time.sleep(1)
-        print("Dealer BLACKJACK!")
-        if h_value == p_value:
-            print("Push!")   
-        dealer_turn = True
+
     else:
+        time.sleep(2)
         hand = random.choice(list(deck.keys()))
         deck.pop(hand)
         h_hand.append(hand)
         h_value += int(orig_deck.get(hand))
-        print ("Dealer gets ", hand, "\n", "Dealer cards: ", h_hand, "\n" , "Value: ", h_value, "\n")
-        time.sleep(1)
+        print ("Dealer gets ", hand, " Value: ", h_value, "\n")
+        time.sleep(2)
+        
   #  play_prompt = input("Play again? (y/n)")
   #  if play_prompt == "y"
     
+
+
+
+#The combination of an ace with a card other than a ten-card is known as a "soft hand," 
+#because the player can count the ace as a 1 or 11, and either draw cards or not. 
+# For example with a "soft 17" (an ace and a 6), the total is 7 or 17. 
+# While a count of 17 is a good hand, the player may wish to draw for a higher total. 
+# If the draw creates a bust hand by counting the ace as an 11, the player simply counts the ace as a 1 and continues playing by standing or "hitting" (asking the dealer for additional cards, one at a time).
 
 
 

@@ -98,3 +98,10 @@ try:
         print(source + " was moved")
 except FileNotFoundError:
     print(source + " was not found")
+
+os.remove(path)
+os.rmdir(path)
+shutil.rmtree(path)
+import os as #something
+
+#38 rock paper scissors
