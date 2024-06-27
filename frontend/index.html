@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <title>Document</title>
+</head>
+
+<body>
+    <main class="container-fluid">
+        <nav>
+            <h1>JBlackjack</h1>
+        </nav>
+        
+        <div x-data="
+        function playGame() {
+            return {
+                player_score: null,
+                player_cards: null,
+                house_score: null,
+                house_cards: null,
+                house_card_paths:null,
+                player_card_paths: null,
+                game_data: null,
+                error: null,
+                isLoading: false,
+                async init() {
+                    this.isLoading = true;
+                    try {
+                        response = 	await fetch('api/game')
+                        game_data = await response.json()
+                        this.player_score = game_data.player_score;
+                        this.player_cards = game_data.player_cards;
+                        this.house_score = game_data.house_score;
+                        this.house_cards = game_data.house_cards;
+                        this.player_card_paths = game_data.player_card_paths;
+                        this.house_card_paths = game_data.house_card_paths
+                    } catch (err) {
+                        this.player_score = null;
+                        this.house_score = null;
+                        this.error = err
+                    }
+                this.isLoading = false
+            }
+        }
+    }">
+            <template x-if="isLoading">
+                <p>Loading...</p>
+            </template>
+
+
+            <h2>Player Cards:</h2>
+            <span x-text="`Total Card value: ${player_score}`"></span>
+            <template x-for="card in player_cards">
+                <p x-text="`${card[0]} of ${card[1]}`"></p>
+
+            </template>
+            <template x-for="path in player_card_paths">
+                <img :src="path" alt="">
+            </template>
+
+            <h2>House Cards:</h2>
+            <span x-text="`Total Card value: ${house_score}`"></span>
+            <template x-for="card in house_cards">
+                <p x-text="`${card[0]} of ${card[1]}`"></p>
+            </template>
+            <template x-for="path in house_card_paths">
+                <img :src="path" alt="">
+            </template>
+
+        </div>
+
+
+    </main>
+</body>
+
+</html>
